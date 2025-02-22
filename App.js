@@ -16,13 +16,3 @@ export default function App() {
       </NavigationContainer>
   );
 }
-
-
-/*
-import React from 'react';
-import BottomTabNavigator from './src/navigation/BottomTabNavigator';
-
-export default function App() {
-  return <BottomTabNavigator />;
-}
-*/
