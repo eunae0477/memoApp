@@ -1,45 +1,43 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Image, StyleSheet, FlatList, ScrollView } from 'react-native';
+import { View, Text, Image, StyleSheet, FlatList, ScrollView, TextInput, Button } from 'react-native';
 import axios from "axios";
+import CONFIG from "../../Config";
+import ReviewInput from "../components/ReviewInput";
 
 export default function DetailScreen({ route }) {
     const { item } = route.params;
 
-    const [myReview, setMyReview] = useState([]);
+    /*const [myReview, setMyReview] = useState([]);*/
     const [reviewData, setReviewData] = useState([]);
     const [scoreAvg, setScoreAvg] = useState(0.0);
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                // 후기 리스트 가져오기
-                const reviewListResponse = await axios.get("http://192.168.219.101:8080/review-list", {
-                    params: { contentsId: item.id },
-                });
-                setReviewData(reviewListResponse.data);
-                console.log(reviewListResponse.data);
+    const fetchData = async () => {
+        try {
+            // 후기 리스트 가져오기
+            const reviewListResponse = await axios.get(CONFIG.API_BASE_URL+"/review-list", {
+                params: { contentsId: item.id },
+            });
+            setReviewData(reviewListResponse.data);
 
-                // 나의 후기 가져오기
-                const myReviewResponse = await axios.get("http://192.168.219.101:8080/review-list", {
-                    params: { contentsId: item.id, usrId: 1 },
-                });
-                setMyReview(myReviewResponse.data);
-                console.log(myReviewResponse.data);
+            // 나의 후기 가져오기
+            /*const myReviewResponse = await axios.get(CONFIG.API_BASE_URL+"/review-list", {
+                params: { contentsId: item.id, usrId: CONFIG.LOGIN_ID },
+            });
+            setMyReview(myReviewResponse.data);*/
 
-                // 평균 점수 가져오기
-                const scoreResponse = await axios.get("http://192.168.219.101:8080/review-score", {
-                    params: { contentsId: item.id },
-                });
-                if (scoreResponse.data && scoreResponse.data > 0){
-                    setScoreAvg(scoreResponse.data);
-                }
-
-                console.log(scoreResponse.data);
-            } catch (error) {
-                console.error("데이터 가져오기 오류:", error);
+            // 평균 점수 가져오기
+            const scoreResponse = await axios.get(CONFIG.API_BASE_URL+"/review-score", {
+                params: { contentsId: item.id },
+            });
+            if (scoreResponse.data && scoreResponse.data > 0){
+                setScoreAvg(scoreResponse.data);
             }
-        };
+        } catch (error) {
+            console.error("데이터 가져오기 오류:", error);
+        }
+    };
 
+    useEffect(() => {
         fetchData();
     }, []);
 
@@ -57,7 +55,7 @@ export default function DetailScreen({ route }) {
             <Text style={styles.score}>평균 점수: {scoreAvg}</Text>
 
             {/* 나의 후기 */}
-            {myReview && myReview.length > 0 ? (
+            {/*{myReview && myReview.length > 0 ? (
                 <View style={styles.myReview}>
                     <Text style={styles.sectionTitle}>나의 후기</Text>
                     <Text>점수: {myReview[0].score}</Text>
@@ -65,8 +63,22 @@ export default function DetailScreen({ route }) {
                     <Text>후기: {myReview[0].comment}</Text>
                 </View>
             ) : (
-                <Text style={styles.noReview}>등록된 나의 후기가 없습니다.</Text>
-            )}
+                <View style={styles.inputContainer}>
+                    <TextInput
+                        style={styles.input}
+                        placeholder="후기를 입력하세요..."
+                        value={myReview}
+
+                    />
+                    <Button title="저장" onPress={reviewSave}/>
+                </View>
+            )}*/}
+
+            {/* 후기 등록 */}
+            <ReviewInput
+                contentsId={item.id}
+                onReviewSaved={() => fetchData()}
+            />
 
             {/* 전체 리뷰 리스트 */}
             <Text style={styles.sectionTitle}>전체 리뷰</Text>
@@ -103,4 +115,17 @@ const styles = StyleSheet.create({
     noReview: { fontSize: 16, color: 'gray', marginBottom: 10 },
     reviewItem: { padding: 10, borderBottomWidth: 1, borderBottomColor: '#ccc' },
     userName: { fontWeight: 'bold' },
+    inputContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginTop: 10,
+    },
+    input: {
+        flex: 1,
+        borderWidth: 1,
+        borderColor: '#ccc',
+        padding: 10,
+        borderRadius: 5,
+        marginRight: 10,
+    },
 });

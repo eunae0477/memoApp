@@ -1,24 +1,28 @@
 import React, { useEffect, useState } from "react";
 import {View, Text, FlatList, StyleSheet, Image, TouchableOpacity} from 'react-native';
 import axios from "axios";
+import CONFIG from "../../Config";
+import {useFocusEffect} from "@react-navigation/native";
 
 export default function RankList({typeCode, navigation}) {
     const [data, setData] = useState([]);
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await axios.get("http://192.168.219.101:8080/contents-list", {
-                    params: { typeCode: typeCode },
-                });
-                setData(response.data);
-            } catch (error) {
-                console.error("데이터 가져오기 오류:", error);
-            }
-        };
+    const fetchData = async () => {
+        try {
+            const response = await axios.get(CONFIG.API_BASE_URL+"/contents-list", {
+                params: { typeCode: typeCode },
+            });
+            setData(response.data);
+        } catch (error) {
+            console.error("데이터 가져오기 오류:", error);
+        }
+    };
 
-        fetchData();
-    }, []);
+    useFocusEffect( // ✅ 화면이 포커스될 때마다 리뷰 목록 갱신
+        React.useCallback(() => {
+            fetchData();
+        }, [])
+    );
 
     return (
         <View style={styles.container}>
