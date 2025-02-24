@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, Image, StyleSheet, FlatList, ScrollView, TextInput, Button } from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {Button, FlatList, Image, ScrollView, StyleSheet, Text, View} from 'react-native';
 import axios from "axios";
 import CONFIG from "../../Config";
 import ReviewInput from "../components/ReviewInput";
@@ -7,7 +7,6 @@ import ReviewInput from "../components/ReviewInput";
 export default function DetailScreen({ route }) {
     const { item } = route.params;
 
-    /*const [myReview, setMyReview] = useState([]);*/
     const [reviewData, setReviewData] = useState([]);
     const [scoreAvg, setScoreAvg] = useState(0.0);
 
@@ -18,12 +17,6 @@ export default function DetailScreen({ route }) {
                 params: { contentsId: item.id },
             });
             setReviewData(reviewListResponse.data);
-
-            // 나의 후기 가져오기
-            /*const myReviewResponse = await axios.get(CONFIG.API_BASE_URL+"/review-list", {
-                params: { contentsId: item.id, usrId: CONFIG.LOGIN_ID },
-            });
-            setMyReview(myReviewResponse.data);*/
 
             // 평균 점수 가져오기
             const scoreResponse = await axios.get(CONFIG.API_BASE_URL+"/review-score", {
@@ -41,6 +34,21 @@ export default function DetailScreen({ route }) {
         fetchData();
     }, []);
 
+    const reviewDel = async (reviewId) => {
+        try {
+            console.log("삭제하려는 review Id = ", reviewId);
+
+            fetchData();
+        } catch (error) {
+            console.log(error);
+        }
+
+    }
+
+    const reviewUdt = () => {
+
+    }
+
     return (
         <ScrollView
             style={styles.container}
@@ -53,26 +61,6 @@ export default function DetailScreen({ route }) {
 
             {/* 평균 점수 */}
             <Text style={styles.score}>평균 점수: {scoreAvg}</Text>
-
-            {/* 나의 후기 */}
-            {/*{myReview && myReview.length > 0 ? (
-                <View style={styles.myReview}>
-                    <Text style={styles.sectionTitle}>나의 후기</Text>
-                    <Text>점수: {myReview[0].score}</Text>
-                    <Text>날짜: {myReview[0].reviewDate}</Text>
-                    <Text>후기: {myReview[0].comment}</Text>
-                </View>
-            ) : (
-                <View style={styles.inputContainer}>
-                    <TextInput
-                        style={styles.input}
-                        placeholder="후기를 입력하세요..."
-                        value={myReview}
-
-                    />
-                    <Button title="저장" onPress={reviewSave}/>
-                </View>
-            )}*/}
 
             {/* 후기 등록 */}
             <ReviewInput
@@ -92,6 +80,13 @@ export default function DetailScreen({ route }) {
                             <Text>점수: {item.score}</Text>
                             <Text>날짜: {item.reviewDate}</Text>
                             <Text>후기: {item.comment}</Text>
+                            {/* 현재 로그인한 사용자의 후기만 수정/삭제 버튼 보이게 설정 */}
+                            {String(item.usrId).trim() === String(CONFIG.LOGIN_ID).trim() && (
+                                <View style={styles.buttonContainer}>
+                                    <Button title="수정" onPress={() => reviewUdt(item.id)} />
+                                    <Button title="삭제" onPress={() => reviewDel(item.id)} />
+                                </View>
+                            )}
                         </View>
                     )}
                     scrollEnabled={false} // ✅ `ScrollView`가 있으므로 `FlatList` 자체 스크롤 비활성화
