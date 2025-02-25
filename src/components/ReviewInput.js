@@ -20,7 +20,7 @@ const ReviewInput = ({contentsId, onReviewSaved}) => {
             }
 
             // 리뷰 저장
-            await axios.post(CONFIG.API_BASE_URL+"/review-save", {
+            await axios.post(CONFIG.API_BASE_URL+"/review", {
                 contentsId: contentsId,
                 usrId: CONFIG.LOGIN_ID,
                 score: numericScore,
