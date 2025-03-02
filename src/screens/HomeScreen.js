@@ -16,13 +16,13 @@ export default function HomeScreen({ navigation }) {
     const renderScene = SceneMap({
         webtoon: () => (
             <View style={styles.container}>
-                <Text style={styles.sectionTitle}>웹툰 순위</Text>
+                <Text style={styles.sectionTitle}>웹툰 TOP 10</Text>
                 <RankList typeCode="B1" navigation={navigation} />
             </View>
         ),
         novel: () => (
             <View style={styles.container}>
-                <Text style={styles.sectionTitle}>웹소설 순위</Text>
+                <Text style={styles.sectionTitle}>웹소설 TOP 10</Text>
                 <RankList typeCode="B2" navigation={navigation} />
             </View>
         ),
@@ -50,6 +50,6 @@ export default function HomeScreen({ navigation }) {
 const styles = StyleSheet.create({
     container: { flex: 1, padding: 16, backgroundColor: "#fff" },
     sectionTitle: { fontSize: 18, fontWeight: "bold", marginVertical: 10 },
-    tabBar: { backgroundColor: "#6200EE" }, // 탭 배경 색상
+    tabBar: { backgroundColor: "#eeb600" }, // 탭 배경 색상
     indicator: { backgroundColor: "white" }, // 선택된 탭 하단 강조선
 });

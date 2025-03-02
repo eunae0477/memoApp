@@ -1,10 +1,9 @@
 import React, {useEffect, useState} from 'react';
-import {Alert, Button, FlatList, Image, ScrollView, StyleSheet, Text, View} from 'react-native';
+import {Alert, ScrollView, StyleSheet} from 'react-native';
 import axios from "axios";
 import CONFIG from "../../Config";
 import ContentInfo from "../components/ContentInfo";
 import ReviewInput from "../components/ReviewInput";
-import ReviewItem from "../components/ReviewItem";
 import ReviewList from "../components/ReviewList";
 
 export default function DetailScreen({ route }) {
@@ -12,6 +11,9 @@ export default function DetailScreen({ route }) {
 
     const [reviewData, setReviewData] = useState([]);
     const [scoreAvg, setScoreAvg] = useState(0.0);
+    const [likeIt, setLikeIt] = useState(false);
+    const [seen, setSeen] = useState(false);
+    const [bookmark, setBookmark] = useState(false);
 
     const fetchData = async () => {
         try {
@@ -27,7 +29,20 @@ export default function DetailScreen({ route }) {
             });
             if (scoreResponse.data && scoreResponse.data > 0){
                 setScoreAvg(scoreResponse.data);
+            } else {
+                setScoreAvg(0.0);
             }
+
+            // 내가 봤는지, 북마크했는지, 좋아요했는지 선택 여부
+            const BookmarkResponse = await axios.get(CONFIG.API_BASE_URL+"/bookmark-list", {
+                params: {
+                            contents_id : item.id,
+                            usr_id : CONFIG.LOGIN_ID
+                        },
+            });
+
+            // TODO
+
         } catch (error) {
             console.error("데이터 가져오기 오류:", error);
         }
@@ -39,7 +54,6 @@ export default function DetailScreen({ route }) {
 
     const reviewDel = (reviewId) => {
         try {
-            console.log("삭제하려는 review Id = ", reviewId);
             Alert.alert(
                 "",
                 "선택한 리뷰를 삭제하시겠습니까?",

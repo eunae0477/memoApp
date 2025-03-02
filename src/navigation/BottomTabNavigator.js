@@ -28,7 +28,7 @@ export default function BottomTabNavigator() {
                 },
             })}
         >
-            <Tab.Screen name="홈" component={HomeScreen} />
+            <Tab.Screen name="홈" component={HomeScreen} options={{ headerShown: false }}/>
             {/*<Tab.Screen name="웹툰" component={WebtoonScreen}/>
             <Tab.Screen name="웹소설" component={NovelScreen}/>*/}
             <Tab.Screen name="북마크" component={BookmarkScreen} options={{ headerShown: false }}/>
