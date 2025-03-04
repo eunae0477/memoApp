@@ -11,9 +11,6 @@ export default function DetailScreen({ route }) {
 
     const [reviewData, setReviewData] = useState([]);
     const [scoreAvg, setScoreAvg] = useState(0.0);
-    const [likeIt, setLikeIt] = useState(false);
-    const [seen, setSeen] = useState(false);
-    const [bookmark, setBookmark] = useState(false);
 
     const fetchData = async () => {
         try {
@@ -32,17 +29,6 @@ export default function DetailScreen({ route }) {
             } else {
                 setScoreAvg(0.0);
             }
-
-            // 내가 봤는지, 북마크했는지, 좋아요했는지 선택 여부
-            const BookmarkResponse = await axios.get(CONFIG.API_BASE_URL+"/bookmark-list", {
-                params: {
-                            contents_id : item.id,
-                            usr_id : CONFIG.LOGIN_ID
-                        },
-            });
-
-            // TODO
-
         } catch (error) {
             console.error("데이터 가져오기 오류:", error);
         }
@@ -89,7 +75,7 @@ export default function DetailScreen({ route }) {
         >
 
             {/* 컨텐츠 정보*/}
-            <ContentInfo item={item} scoreAvg={scoreAvg} />
+            <ContentInfo item={item} scoreAvg={scoreAvg}/>
 
             {/* 후기 등록 */}
             <ReviewInput
