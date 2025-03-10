@@ -17,16 +17,18 @@ export default function ContentInfo({ item, scoreAvg }) {
     const fetchData = async () => {
         try {
             // 내가 봤는지, 북마크했는지, 좋아요했는지 선택 여부
-            const BookmarkResponse = await axios.get(CONFIG.API_BASE_URL+"/bookmark-list", {
+            const bookmarkResponse = await axios.get(CONFIG.API_BASE_URL+"/bookmark-list", {
                 params: {
                     contentsId: item.id,
                     usrId: CONFIG.LOGIN_ID
                 },
             });
 
-            setBookmark(BookmarkResponse.data[0].bookmark);
-            setLikeIt(BookmarkResponse.data[0].likeIt);
-            setSeen(BookmarkResponse.data[0].seen);
+            if (bookmarkResponse.data.length > 0) {
+                setBookmark(bookmarkResponse.data[0].bookmark);
+                setLikeIt(bookmarkResponse.data[0].likeIt);
+                setSeen(bookmarkResponse.data[0].seen);
+            }
         } catch (error) {
             console.error("데이터 가져오기 오류:", error);
         }

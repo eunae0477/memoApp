@@ -3,7 +3,7 @@ import {View, Text, Button, StyleSheet, Alert} from "react-native";
 import axios from "axios";
 import CONFIG from "../../Config";
 
-export default function ReviewItem({ item, fetchData }) {
+export default function ReviewItem({ item, fetchData, setReviewForEdit }) {
     const reviewDel = () => {
         try {
             Alert.alert("", "선택한 리뷰를 삭제하시겠습니까?", [
@@ -23,24 +23,21 @@ export default function ReviewItem({ item, fetchData }) {
         }
     };
 
-    const reviewUdt = (item) => {
-        console.log("수정");
-        console.log(item.comment);
-        console.log(item.score);
-        console.log(item.id);
-        console.log(item.reviewDate);
-    }
-
     return (
         <View style={styles.reviewItem}>
             <Text style={styles.userName}>{item.usrName}</Text>
             <Text>점수: {item.score}</Text>
             <Text>날짜: {item.reviewDate}</Text>
             <Text>후기: {item.comment}</Text>
-            {String(item.usrId).trim() === String(CONFIG.LOGIN_ID).trim() && (
+            {String(item.usrId) === String(CONFIG.LOGIN_ID) ? (
                 <View style={styles.buttonContainer}>
-                    <Button title="수정" onPress={() => reviewUdt(item)} />
-                    <Button title="삭제" onPress={reviewDel} />
+                    <Text style={styles.reviewBtn} onPress={() => setReviewForEdit(item)}>수정</Text>
+                    <Text style={styles.reviewBtn} onPress={reviewDel}>삭제</Text>
+                </View>
+            ) : (
+                <View style={styles.buttonContainer}>
+                    <Text style={[styles.reviewBtn, {backgroundColor: 'grey'}]}>조아용</Text>
+                    <Text style={[styles.reviewBtn, {backgroundColor: 'grey'}]}>시러용</Text>
                 </View>
             )}
         </View>
@@ -50,4 +47,14 @@ export default function ReviewItem({ item, fetchData }) {
 const styles = StyleSheet.create({
     reviewItem: { padding: 10, borderBottomWidth: 1, borderBottomColor: "#ccc" },
     userName: { fontWeight: "bold" },
+    buttonContainer: {
+        flexDirection: 'row',
+        columnGap: 10,
+    },
+    reviewBtn: {
+        flexGrow: 1,
+        textAlign: 'center',
+        backgroundColor: 'skyblue',
+        maxWidth: 200
+    }
 });

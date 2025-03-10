@@ -1,5 +1,5 @@
 const CONFIG = {
-    API_BASE_URL: "http://192.168.219.102:8080",
+    API_BASE_URL: "http://192.168.219.110:8080",
     LOGIN_ID: 1
 };
 

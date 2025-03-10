@@ -11,6 +11,7 @@ export default function DetailScreen({ route }) {
 
     const [reviewData, setReviewData] = useState([]);
     const [scoreAvg, setScoreAvg] = useState(0.0);
+    const [reviewForEdit, setReviewForEdit] = useState(null);   // 수정할 리뷰의 데이터
 
     const fetchData = async () => {
         try {
@@ -63,10 +64,6 @@ export default function DetailScreen({ route }) {
         }
     }
 
-    const reviewUdt = () => {
-
-    }
-
     return (
         <ScrollView
             style={styles.container}
@@ -81,10 +78,16 @@ export default function DetailScreen({ route }) {
             <ReviewInput
                 contentsId={item.id}
                 onReviewSaved={() => fetchData()}
+                reviewForEdit={reviewForEdit}
+                setReviewForEdit={setReviewForEdit}
             />
 
             {/* 전체 리뷰 리스트 */}
-            <ReviewList reviewData={reviewData} fetchData={fetchData} />
+            <ReviewList
+                reviewData={reviewData}
+                fetchData={fetchData}
+                setReviewForEdit={setReviewForEdit}
+            />
         </ScrollView>
     );
 }
