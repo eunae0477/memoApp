@@ -4,8 +4,6 @@ import axios from "axios";
 import CONFIG from "../../Config";
 
 export default function ReviewItem({ item, fetchData, setReviewForEdit, setReviewData }) {
-    console.log("reviewGoodCnt 값:", item.reviewGoodCnt, "타입:", typeof item.reviewGoodCnt);
-
     const reviewDel = () => {
         try {
             Alert.alert("", "선택한 리뷰를 삭제하시겠습니까?", [
@@ -25,24 +23,40 @@ export default function ReviewItem({ item, fetchData, setReviewForEdit, setRevie
         }
     };
 
-    const reviewGood = (state) => {
+    const reviewGood = async (state) => {
         setReviewData((prevData) =>
             prevData.map((review) =>
-                review.id === item.id
-                    ? { ...review, reviewGoodCnt: state ? review.reviewGoodCnt + 1 : review.reviewGoodCnt - 1, reviewGb: state ? 'G' : '' }
-                    : review
+                review.id === item.id ? { ...review,
+                                        reviewGoodCnt: state ? review.reviewGoodCnt + 1 : review.reviewGoodCnt - 1,
+                                        reviewBadCnt: review.reviewGb == 'B' ? review.reviewBadCnt - 1 : review.reviewBadCnt,
+                                        reviewGb: state ? 'G' : '' } : review
             )
         );
+
+        const paramData = new URLSearchParams();
+        paramData.append("targetReviewId", item.id);
+        paramData.append("usrId", CONFIG.LOGIN_ID);
+        paramData.append("gb", state ? 'G' : '');
+
+        await axios.post(CONFIG.API_BASE_URL+"/review-gb", paramData);
     };
 
-    const reviewBad = (state) => {
+    const reviewBad = async (state) => {
         setReviewData((prevData) =>
             prevData.map((review) =>
-                review.id === item.id
-                    ? { ...review, reviewBadCnt: state ? review.reviewBadCnt + 1 : review.reviewBadCnt - 1, reviewGb: state ? 'B' : '' }
-                    : review
+                review.id === item.id ? { ...review,
+                                        reviewBadCnt: state ? review.reviewBadCnt + 1 : review.reviewBadCnt - 1,
+                                        reviewGoodCnt: review.reviewGb == 'G' ? review.reviewGoodCnt - 1 : review.reviewGoodCnt,
+                                        reviewGb: state ? 'B' : '' } : review
             )
         );
+
+        const paramData = new URLSearchParams();
+        paramData.append("targetReviewId", item.id);
+        paramData.append("usrId", CONFIG.LOGIN_ID);
+        paramData.append("gb", state ? 'B' : '');
+
+        await axios.post(CONFIG.API_BASE_URL+"/review-gb", paramData);
     };
 
 
