@@ -2,7 +2,7 @@ import React from "react";
 import { FlatList, Text, View } from "react-native";
 import ReviewItem from "./ReviewItem";
 
-export default function ReviewList({ reviewData, fetchData, setReviewForEdit }) {
+export default function ReviewList({ reviewData, fetchData, setReviewForEdit, setReviewData }) {
     return (
         <>
             <Text style={{ fontSize: 20, fontWeight: "bold", marginVertical: 10 }}>전체 리뷰</Text>
@@ -13,7 +13,8 @@ export default function ReviewList({ reviewData, fetchData, setReviewForEdit }) 
                     renderItem={({ item }) => <ReviewItem
                                                     item={item}
                                                     fetchData={fetchData}
-                                                    setReviewForEdit={setReviewForEdit}/>
+                                                    setReviewForEdit={setReviewForEdit}
+                                                    setReviewData={setReviewData}/>
                                 }
                     scrollEnabled={false}
                 />

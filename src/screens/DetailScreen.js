@@ -17,7 +17,9 @@ export default function DetailScreen({ route }) {
         try {
             // 후기 리스트 가져오기
             const reviewListResponse = await axios.get(CONFIG.API_BASE_URL+"/review-list", {
-                params: { contentsId: item.id },
+                params: {
+                        contentsId: item.id,
+                        usrId: CONFIG.LOGIN_ID},
             });
             setReviewData(reviewListResponse.data);
 
@@ -87,6 +89,7 @@ export default function DetailScreen({ route }) {
                 reviewData={reviewData}
                 fetchData={fetchData}
                 setReviewForEdit={setReviewForEdit}
+                setReviewData={setReviewData}
             />
         </ScrollView>
     );
