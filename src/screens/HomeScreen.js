@@ -12,18 +12,26 @@ export default function HomeScreen({ navigation }) {
         { key: "novel", title: "웹소설" },
     ]);
 
+    const [webtoonData, setWebtoonData] = useState([]);
+    const [novelData, setNovelData] = useState([]);
+    const [hasLoaded, setHasLoaded] = useState(false);  // 이미 데이터가 로드됐는지 체크하는 상태
+
     // 각 탭에 대한 렌더링 함수
     const renderScene = SceneMap({
         webtoon: () => (
             <View style={styles.container}>
                 <Text style={styles.sectionTitle}>웹툰 TOP 10</Text>
-                <RankList typeCode="B1" navigation={navigation} />
+                <RankList typeCode="B1" navigation={navigation}
+                          data={webtoonData} setData={setWebtoonData}
+                          hasLoaded={hasLoaded} setHasLoaded={setHasLoaded} />
             </View>
         ),
         novel: () => (
             <View style={styles.container}>
                 <Text style={styles.sectionTitle}>웹소설 TOP 10</Text>
-                <RankList typeCode="B2" navigation={navigation} />
+                <RankList typeCode="B2" navigation={navigation}
+                          data={novelData} setData={setNovelData}
+                          hasLoaded={hasLoaded} setHasLoaded={setHasLoaded} />
             </View>
         ),
     });

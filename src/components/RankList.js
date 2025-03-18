@@ -1,11 +1,10 @@
-import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView } from "react-native";
+import React, {useEffect, useState} from "react";
+import {Image, RefreshControl, ScrollView, StyleSheet, Text, TouchableOpacity, View} from "react-native";
 import axios from "axios";
 import CONFIG from "../../Config";
-import { useFocusEffect } from "@react-navigation/native";
 
-export default function RankList({ typeCode, navigation }) {
-    const [data, setData] = useState([]);
+export default function RankList({ typeCode, navigation, data, setData, hasLoaded, setHasLoaded}) {
+    const [isRefreshing, setIsRefreshing] = useState(false);  // 새로고침 상태
 
     const fetchData = async () => {
         try {
@@ -13,19 +12,32 @@ export default function RankList({ typeCode, navigation }) {
                 params: { typeCode: typeCode },
             });
             setData(response.data);
+            setHasLoaded(true);
         } catch (error) {
             console.error("데이터 가져오기 오류:", error);
         }
     };
 
-    useFocusEffect(
-        React.useCallback(() => {
+    // useEffect로 처음 한 번만 데이터를 불러옵니다.
+    useEffect(() => {
+        if (!hasLoaded) {
             fetchData();
-        }, [])
-    );
+        }
+    }, [typeCode, hasLoaded]);  // `hasLoaded`가 `false`일 때만 데이터를 새로 로드하도록 설정
+
+    // 새로고침 기능
+    const onRefresh = async () => {
+        setIsRefreshing(true);
+        await fetchData();
+        setIsRefreshing(false);
+    };
 
     return (
-        <ScrollView style={styles.container}>
+        <ScrollView
+            style={styles.container}
+            refreshControl={
+                <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
+            }>
             <View style={styles.gridContainer}>
                 {data.map((item, index) => (
                     <TouchableOpacity
