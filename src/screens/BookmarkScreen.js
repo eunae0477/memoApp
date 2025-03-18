@@ -8,29 +8,42 @@ const initialLayout = { width: Dimensions.get("window").width };
 export default function BookmarkScreen({ navigation }) {
     const [index, setIndex] = useState(0);
     const [routes] = useState([
-        { key: "bookmark", title: "볼거임" },
-        { key: "likeIt", title: "좋더라" },
-        { key: "seen", title: "봤어" },
+        { key: "bookmark", title: "앞으로 볼 작품" },
+        { key: "likeIt", title: "좋았던 작품" },
+        { key: "seen", title: "이미 본 작품" },
     ]);
+
+    const [bookmarkData, setBookmarkData] = useState([]);
+    const [likeItData, setLikeItData] = useState([]);
+    const [seenData, setSeenData] = useState([]);
+    const [hasLoadedBookmark, setHasLoadedBookmark] = useState(false);
+    const [hasLoadedLikeIt, setHasLoadedLikeIt] = useState(false);
+    const [hasLoadedSeen, setHasLoadedSeen] = useState(false);
 
     // 각 탭에 대한 렌더링 함수
     const renderScene = SceneMap({
         bookmark: () => (
             <View style={styles.container}>
-                <Text style={styles.sectionTitle}>볼 작품</Text>
-                <BookmarkList bookmarkType="bookmark" navigation={navigation} />
+                <Text style={styles.sectionTitle}>앞으로 볼 작품</Text>
+                <BookmarkList bookmarkType="bookmark" navigation={navigation}
+                              data={bookmarkData} setData={setBookmarkData}
+                              hasLoaded={hasLoadedBookmark} setHasLoaded={setHasLoadedBookmark} />
             </View>
         ),
         likeIt: () => (
             <View style={styles.container}>
-                <Text style={styles.sectionTitle}>좋게 본 작품</Text>
-                <BookmarkList bookmarkType="likeIt" navigation={navigation} />
+                <Text style={styles.sectionTitle}>좋았던 작품</Text>
+                <BookmarkList bookmarkType="likeIt" navigation={navigation}
+                              data={likeItData} setData={setLikeItData}
+                              hasLoaded={hasLoadedLikeIt} setHasLoaded={setHasLoadedLikeIt} />
             </View>
         ),
         seen: () => (
             <View style={styles.container}>
-                <Text style={styles.sectionTitle}>본 작품</Text>
-                <BookmarkList bookmarkType="seen" navigation={navigation} />
+                <Text style={styles.sectionTitle}>이미 본 작품</Text>
+                <BookmarkList bookmarkType="seen" navigation={navigation}
+                              data={seenData} setData={setSeenData}
+                              hasLoaded={hasLoadedSeen} setHasLoaded={setHasLoadedSeen} />
             </View>
         ),
     });

@@ -1,11 +1,10 @@
-import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView } from "react-native";
+import React, {useEffect, useState} from "react";
+import {Image, RefreshControl, ScrollView, StyleSheet, Text, TouchableOpacity, View} from "react-native";
 import axios from "axios";
 import CONFIG from "../../Config";
-import { useFocusEffect } from "@react-navigation/native";
 
-export default function BookmarkList({ bookmarkType, navigation }) {
-    const [data, setData] = useState([]);
+export default function BookmarkList({ bookmarkType, navigation, data, setData, hasLoaded, setHasLoaded }) {
+    const [isRefreshing, setIsRefreshing] = useState(false);  // 새로고침 상태
 
     const fetchData = async () => {
         try {
@@ -19,19 +18,30 @@ export default function BookmarkList({ bookmarkType, navigation }) {
             const response = await axios.get(CONFIG.API_BASE_URL + "/bookmark-list", { params });
 
             setData(response.data);
+            setHasLoaded(true);
         } catch (error) {
             console.error("데이터 가져오기 오류:", error);
         }
     };
 
-    useFocusEffect(
-        React.useCallback(() => {
+    useEffect(() => {
+        if (!hasLoaded) {
             fetchData();
-        }, [])
-    );
+        }
+    }, [bookmarkType, hasLoaded]);
+
+    // 새로고침 기능
+    const onRefresh = async () => {
+        setIsRefreshing(true);
+        await fetchData();
+        setIsRefreshing(false);
+    };
 
     return (
-        <ScrollView style={styles.container}>
+        <ScrollView style={styles.container}
+                    refreshControl={
+                        <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
+                    }>
             <View style={styles.gridContainer}>
                 {data.map((item, index) => (
                     <TouchableOpacity

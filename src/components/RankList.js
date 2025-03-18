@@ -23,7 +23,7 @@ export default function RankList({ typeCode, navigation, data, setData, hasLoade
         if (!hasLoaded) {
             fetchData();
         }
-    }, [typeCode, hasLoaded]);  // `hasLoaded`가 `false`일 때만 데이터를 새로 로드하도록 설정
+    }, [typeCode, hasLoaded]);
 
     // 새로고침 기능
     const onRefresh = async () => {
