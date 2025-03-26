@@ -24,6 +24,14 @@ export default function BottomTabNavigator() {
 
                     return <Ionicons name={iconName} size={size} color={color}/>;
                 },
+                tabBarLabelStyle: {
+                    fontSize: 13,
+                },
+                tabBarStyle: {
+                    backgroundColor: "#fff",
+                    position: "absolute",
+                    // bottom: -30
+                }
             })}
         >
             <Tab.Screen name="홈" component={HomeScreen} options={{ headerShown: false }}/>

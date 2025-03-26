@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Alert, ScrollView, StyleSheet} from 'react-native';
+import {Alert, ScrollView, StyleSheet, View} from 'react-native';
 import axios from "axios";
 import CONFIG from "../../Config";
 import ContentInfo from "../components/ContentInfo";
@@ -67,7 +67,7 @@ export default function DetailScreen({ route }) {
     }
 
     return (
-        <ScrollView
+        <View
             style={styles.container}
             contentContainerStyle={styles.contentContainer}
             keyboardShouldPersistTaps="handled"
@@ -91,7 +91,7 @@ export default function DetailScreen({ route }) {
                 setReviewForEdit={setReviewForEdit}
                 setReviewData={setReviewData}
             />
-        </ScrollView>
+        </View>
     );
 }
 

@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {View, TextInput, Button, StyleSheet, Alert} from 'react-native';
+import {View, TextInput, Button, StyleSheet, Alert, Pressable, Text} from 'react-native';
 import axios from "axios";
 import CONFIG from "../../Config";
 
@@ -62,10 +62,14 @@ const ReviewInput = ({contentsId, onReviewSaved, reviewForEdit, setReviewForEdit
         <View style={styles.container}>
             {/* 후기 입력 필드 */}
             <TextInput
-                style={styles.input}
+                style={[styles.input, styles.textarea]}
                 placeholder="후기를 입력하세요..."
                 value={myReview}
                 onChangeText={setMyReview}
+                editable
+                multiline
+                numberOfLines={20}
+                inputMode={"text"}
             />
 
             {/* 점수 입력 필드 (0~10 사이 숫자) */}
@@ -82,7 +86,10 @@ const ReviewInput = ({contentsId, onReviewSaved, reviewForEdit, setReviewForEdit
                 keyboardType="numeric"
             />
 
-            <Button title="저장" onPress={reviewSave} />
+            <Pressable onPress={reviewSave}>
+                <Text>저장</Text>
+            </Pressable>
+            {/*<Button title="저장" onPress={reviewSave} />*/}
         </View>
     );
 };
@@ -95,9 +102,14 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: '#ccc',
         padding: 10,
+        height: 30,
         borderRadius: 5,
         marginBottom: 10,
     },
+    textarea: {
+        overflowY: "scroll",
+        height: 100,
+    }
 });
 
 export default ReviewInput;
