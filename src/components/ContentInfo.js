@@ -1,12 +1,24 @@
 import React, {useEffect, useState} from "react";
-import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
+import {
+    View,
+    Text,
+    Image,
+    StyleSheet,
+    TouchableOpacity,
+    Pressable,
+    Modal,
+    TouchableWithoutFeedback,
+    TextInput,
+    Button,
+    Keyboard
+} from "react-native";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import { Ionicons } from "@expo/vector-icons";
 import {useNavigation} from "@react-navigation/native";
 import axios from "axios";
 import CONFIG from "../../Config";
 
-export default function ContentInfo({ item, scoreAvg }) {
+export default function ContentInfo({ item, scoreAvg, reviewForEdit }) {
     const navigation = useNavigation();
 
     const [viewCnt, setViewCnt] = useState(0);
@@ -104,6 +116,10 @@ export default function ContentInfo({ item, scoreAvg }) {
         }
     }
 
+    const [modalVisible, setModalVisible] = useState(false);
+
+    const [score, setScore] = useState(reviewForEdit?.score?.toString() || "");
+
     return (
         <View style={styles.container}>
             {/* ✅ 상단 뒤로가기 & 북마크/좋아요 버튼 */}
@@ -154,6 +170,50 @@ export default function ContentInfo({ item, scoreAvg }) {
                     <Text style={styles.statText}>{scoreAvg}</Text>
                 </View>
             </View>
+
+            {/* 점수 입력 */}
+            <View>
+                <Pressable style={styles.response} onPress={() => setModalVisible(true)}>
+                    <Text>평가하기</Text>
+                </Pressable>
+            </View>
+
+            <Modal
+                animationType="slide"
+                transparent={true}
+                visible={modalVisible}
+                onRequestClose={() => {
+                    setModalVisible(false);
+                }}
+            >
+                <TouchableWithoutFeedback
+                    onPress={() => {
+                        Keyboard.dismiss(); setModalVisible(false);
+                    }}
+                >
+                    <View style={styles.modalView}>
+                        <Text style={styles.modalText}>이번 작품은 어땠나요?</Text>
+                        <TextInput
+                            placeholder="숫자만 입력 가능합니다"
+                            placeholderTextColor="#ccc"
+                            style={styles.modalInput}
+                            onChangeText={(text) => {
+                                const numericText = text.replace(/[^0-9]/g, ''); // 숫자만 허용
+                                if (numericText === '' || (parseInt(numericText, 10) <= 10 && parseInt(numericText, 10) >= 0)) {
+                                    setScore(numericText);
+                                }
+                            }}
+                            keyboardType="numeric"
+                            returnKeyType="입력"
+                            onSubmitEditing={() => Keyboard.dismiss()} // 완료 버튼 누르면 키보드 닫힘
+                        ></TextInput>
+                        <Pressable style={styles.modalSubmit} onPress={() => {setModalVisible(false)}}>
+                            <Text>평가하기</Text>
+                        </Pressable>
+                    </View>
+                </TouchableWithoutFeedback>
+
+            </Modal>
         </View>
     );
 }
@@ -216,4 +276,49 @@ const styles = StyleSheet.create({
         fontSize: 14,
         color: "gray",
     },
+    response: {
+        justifyContent: "center",
+        alignItems: "center",
+        width: 250,
+        height: 40,
+        borderRadius: 20,
+        backgroundColor: "#eedd33",
+    },
+    modalView: {
+        position: "absolute",
+        top: "60%",
+        width: "90%",
+        padding: 40,
+        marginHorizontal: "5%",
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: "#333",
+    },
+    modalText: {
+        color: "#fff",
+        textAlign: "center",
+        fontSize: 16,
+        fontWeight: 700,
+        marginBottom: 20
+    },
+    modalInput: {
+        width: "100%",
+        paddingHorizontal: 10,
+        paddingVertical: 10,
+        backgroundColor: "#fff",
+        borderWidth: 1,
+        borderStyle: "solid",
+        borderColor: "#ccc",
+        borderRadius: 3,
+        color: "#333",
+    },
+    modalSubmit: {
+        justifyContent: "center",
+        alignItems: "center",
+        marginTop: 10,
+        backgroundColor: "#eedd33",
+        width: 250,
+        height: 40,
+        borderRadius: 20,
+    }
 });

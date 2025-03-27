@@ -67,7 +67,7 @@ export default function DetailScreen({ route }) {
     }
 
     return (
-        <View
+        <ScrollView
             style={styles.container}
             contentContainerStyle={styles.contentContainer}
             keyboardShouldPersistTaps="handled"
@@ -91,7 +91,7 @@ export default function DetailScreen({ route }) {
                 setReviewForEdit={setReviewForEdit}
                 setReviewData={setReviewData}
             />
-        </View>
+        </ScrollView>
     );
 }
 
@@ -119,5 +119,5 @@ const styles = StyleSheet.create({
         padding: 10,
         borderRadius: 5,
         marginRight: 10,
-    },
+    }
 });

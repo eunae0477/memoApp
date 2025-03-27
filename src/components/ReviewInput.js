@@ -73,7 +73,7 @@ const ReviewInput = ({contentsId, onReviewSaved, reviewForEdit, setReviewForEdit
             />
 
             {/* 점수 입력 필드 (0~10 사이 숫자) */}
-            <TextInput
+            {/*<TextInput
                 style={styles.input}
                 placeholder="점수 (0-10)"
                 value={score}
@@ -84,10 +84,10 @@ const ReviewInput = ({contentsId, onReviewSaved, reviewForEdit, setReviewForEdit
                     }
                 }}
                 keyboardType="numeric"
-            />
+            />*/}
 
-            <Pressable onPress={reviewSave}>
-                <Text>저장</Text>
+            <Pressable style={styles.submit} onPress={reviewSave}>
+                <Text style={styles.submitText}>저장</Text>
             </Pressable>
             {/*<Button title="저장" onPress={reviewSave} />*/}
         </View>
@@ -109,6 +109,18 @@ const styles = StyleSheet.create({
     textarea: {
         overflowY: "scroll",
         height: 100,
+    },
+    submit: {
+        flexDirection: "row",
+        height: 50,
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: "#33ccff",
+    },
+    submitText: {
+        fontSize: 16,
+        color: "#fff",
+        fontWeight: "bold"
     }
 });
 
