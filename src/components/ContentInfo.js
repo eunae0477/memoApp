@@ -17,18 +17,16 @@ export default function ContentInfo({ item, scoreAvg }) {
     const fetchData = async () => {
         try {
             // 내가 봤는지, 북마크했는지, 좋아요했는지 선택 여부
-            const bookmarkResponse = await axios.get(CONFIG.API_BASE_URL+"/bookmark-list", {
+            const bookmarkResponse = await axios.get(CONFIG.API_BASE_URL+"/contents-bookmark", {
                 params: {
                     contentsId: item.id,
                     usrId: CONFIG.LOGIN_ID
                 },
             });
 
-            if (bookmarkResponse.data.length > 0) {
-                setBookmark(bookmarkResponse.data[0].bookmark);
-                setLikeIt(bookmarkResponse.data[0].likeIt);
-                setSeen(bookmarkResponse.data[0].seen);
-            }
+            setBookmark(bookmarkResponse.data.bookmark);
+            setLikeIt(bookmarkResponse.data.likeIt);
+            setSeen(bookmarkResponse.data.seen);
         } catch (error) {
             console.error("데이터 가져오기 오류:", error);
         }
@@ -60,6 +58,7 @@ export default function ContentInfo({ item, scoreAvg }) {
                 params: {
                     contentsId: item.id,
                     usrId: CONFIG.LOGIN_ID,
+                    bookmarkType: 'bookmark',
                     bookmark: !bookmark
                 },
             });
@@ -76,7 +75,8 @@ export default function ContentInfo({ item, scoreAvg }) {
                 params: {
                     contentsId: item.id,
                     usrId: CONFIG.LOGIN_ID,
-                    likeIt: !likeIt
+                    bookmarkType: 'likeIt',
+                    bookmark: !likeIt
                 },
             });
 
@@ -92,7 +92,8 @@ export default function ContentInfo({ item, scoreAvg }) {
                 params: {
                     contentsId: item.id,
                     usrId: CONFIG.LOGIN_ID,
-                    seen: !seen
+                    bookmarkType: 'seen',
+                    bookmark: !seen
                 },
             });
 

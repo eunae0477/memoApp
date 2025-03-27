@@ -10,9 +10,7 @@ export default function BookmarkList({ bookmarkType, navigation, data, setData, 
         try {
             const params = {
                 usrId: CONFIG.LOGIN_ID,
-                bookmark: bookmarkType === "bookmark",
-                likeIt: bookmarkType === "likeIt",
-                seen: bookmarkType === "seen",
+                bookmarkType: bookmarkType
             };
 
             const response = await axios.get(CONFIG.API_BASE_URL + "/bookmark-list", { params });
