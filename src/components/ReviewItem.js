@@ -3,7 +3,7 @@ import {View, Text, Button, StyleSheet, Alert} from "react-native";
 import axios from "axios";
 import CONFIG from "../../Config";
 
-export default function ReviewItem({ item, fetchData, setReviewForEdit, setReviewData }) {
+export default function ReviewItem({ item, getReviewList, setReviewForEdit, setReviewData }) {
     const reviewDel = () => {
         try {
             Alert.alert("", "선택한 리뷰를 삭제하시겠습니까?", [
@@ -14,7 +14,7 @@ export default function ReviewItem({ item, fetchData, setReviewForEdit, setRevie
                         await axios.delete(CONFIG.API_BASE_URL + "/review", {
                             params: { id: item.id },
                         });
-                        fetchData();
+                        getReviewList();
                     },
                 },
             ]);
@@ -63,7 +63,6 @@ export default function ReviewItem({ item, fetchData, setReviewForEdit, setRevie
     return (
         <View style={styles.reviewItem}>
             <Text style={styles.userName}>{item.usrName}</Text>
-            <Text>점수: {item.score}</Text>
             <Text>날짜: {item.reviewDate}</Text>
             <Text>후기: {item.comment}</Text>
             {String(item.usrId) === String(CONFIG.LOGIN_ID) ? (

@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Alert, ScrollView, StyleSheet, View} from 'react-native';
+import {ScrollView, StyleSheet} from 'react-native';
 import axios from "axios";
 import CONFIG from "../../Config";
 import ContentInfo from "../components/ContentInfo";
@@ -12,19 +12,26 @@ export default function DetailScreen({ route }) {
     const [reviewData, setReviewData] = useState([]);
     const [scoreAvg, setScoreAvg] = useState(0.0);
     const [reviewForEdit, setReviewForEdit] = useState(null);   // 수정할 리뷰의 데이터
+    const [myScore, setMyScore] = useState(0);
 
-    const fetchData = async () => {
+    const getReviewList = async () => {
         try {
             // 후기 리스트 가져오기
             const reviewListResponse = await axios.get(CONFIG.API_BASE_URL+"/review-list", {
                 params: {
-                        contentsId: item.id,
-                        usrId: CONFIG.LOGIN_ID},
+                    contentsId: item.id,
+                    usrId: CONFIG.LOGIN_ID},
             });
             setReviewData(reviewListResponse.data);
+        } catch (error) {
+            console.error("데이터 가져오기 오류:", error);
+        }
+    }
 
+    const getScoreAvg = async () => {
+        try {
             // 평균 점수 가져오기
-            const scoreResponse = await axios.get(CONFIG.API_BASE_URL+"/review-score", {
+            const scoreResponse = await axios.get(CONFIG.API_BASE_URL+"/review-score-avg", {
                 params: { contentsId: item.id },
             });
             if (scoreResponse.data && scoreResponse.data > 0){
@@ -35,36 +42,32 @@ export default function DetailScreen({ route }) {
         } catch (error) {
             console.error("데이터 가져오기 오류:", error);
         }
-    };
+    }
 
-    useEffect(() => {
-        fetchData();
-    }, []);
-
-    const reviewDel = (reviewId) => {
+    const getMyScore = async () => {
         try {
-            Alert.alert(
-                "",
-                "선택한 리뷰를 삭제하시겠습니까?",
-                [
-                    { text: "취소", style: "cancel" },
-                    { text: "삭제",
-                        onPress: async () => {
-                            await axios.delete(CONFIG.API_BASE_URL + "/review", {
-                                params: { id: reviewId },
-                            });
-                            fetchData();
-                        }
-                    }
-                ],
-                { cancelable: false } // 바깥 영역 터치 시 닫기 여부
-            );
+            // 나의 평가 점수 가져오기
+            const myScoreData = await axios.get(CONFIG.API_BASE_URL+"/my-score", {
+                params: {
+                    contentsId: item.id,
+                    usrId: CONFIG.LOGIN_ID},
+            });
 
-            fetchData();
+            if (myScoreData.data > 0) {
+                setMyScore(myScoreData.data);
+            } else {
+                setMyScore(0.0);
+            }
         } catch (error) {
-            console.log(error);
+            console.error("데이터 가져오기 오류:", error);
         }
     }
+
+    useEffect(() => {
+        getReviewList();
+        getScoreAvg();
+        getMyScore();
+    }, []);
 
     return (
         <ScrollView
@@ -74,12 +77,12 @@ export default function DetailScreen({ route }) {
         >
 
             {/* 컨텐츠 정보*/}
-            <ContentInfo item={item} scoreAvg={scoreAvg}/>
+            <ContentInfo item={item} scoreAvg={scoreAvg} myScore={myScore} setMyScore={setMyScore} getScoreAvg={getScoreAvg}/>
 
-            {/* 후기 등록 */}
+            {/* 리뷰 등록 */}
             <ReviewInput
                 contentsId={item.id}
-                onReviewSaved={() => fetchData()}
+                onReviewSaved={() => getReviewList()}
                 reviewForEdit={reviewForEdit}
                 setReviewForEdit={setReviewForEdit}
             />
@@ -87,7 +90,7 @@ export default function DetailScreen({ route }) {
             {/* 전체 리뷰 리스트 */}
             <ReviewList
                 reviewData={reviewData}
-                fetchData={fetchData}
+                getReviewList={getReviewList}
                 setReviewForEdit={setReviewForEdit}
                 setReviewData={setReviewData}
             />
