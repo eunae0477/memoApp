@@ -10,7 +10,8 @@ import {
     TouchableWithoutFeedback,
     TextInput,
     Button,
-    Keyboard
+    Keyboard,
+    Alert
 } from "react-native";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import { Ionicons } from "@expo/vector-icons";
@@ -116,9 +117,19 @@ export default function ContentInfo({ item, scoreAvg, reviewForEdit }) {
         }
     }
 
-    const [modalVisible, setModalVisible] = useState(false);
-
-    const [score, setScore] = useState(reviewForEdit?.score?.toString() || "");
+    const [modalVisible, setModalVisible] = useState(false); // 평가 입력 modal 창을 열고 닫는 변수 선언
+    const [score, setScore] = useState(reviewForEdit?.score?.toString() || ""); // 평가 입력 input 변수
+    
+    const handleSubmit = () => {
+        // 평가 입력 input 에 값이 없을 경우 alert 호출 함수
+        if (!score) {
+            Alert.alert("입력 오류", "숫자를 입력해주세요.");
+            return;
+        } else {
+            // 평가 입력 input 에 값이 있을 경우 modal 닫힘
+            setModalVisible(false);
+        }
+    };
 
     return (
         <View style={styles.container}>
@@ -191,25 +202,28 @@ export default function ContentInfo({ item, scoreAvg, reviewForEdit }) {
                         Keyboard.dismiss(); setModalVisible(false);
                     }}
                 >
-                    <View style={styles.modalView}>
-                        <Text style={styles.modalText}>이번 작품은 어땠나요?</Text>
-                        <TextInput
-                            placeholder="숫자만 입력 가능합니다"
-                            placeholderTextColor="#ccc"
-                            style={styles.modalInput}
-                            onChangeText={(text) => {
-                                const numericText = text.replace(/[^0-9]/g, ''); // 숫자만 허용
-                                if (numericText === '' || (parseInt(numericText, 10) <= 10 && parseInt(numericText, 10) >= 0)) {
-                                    setScore(numericText);
-                                }
-                            }}
-                            keyboardType="numeric"
-                            returnKeyType="입력"
-                            onSubmitEditing={() => Keyboard.dismiss()} // 완료 버튼 누르면 키보드 닫힘
-                        ></TextInput>
-                        <Pressable style={styles.modalSubmit} onPress={() => {setModalVisible(false)}}>
-                            <Text>평가하기</Text>
-                        </Pressable>
+                    <View style={styles.modalWrap}>
+                        <View style={styles.modalView}>
+                            <Text style={styles.modalText}>이번 작품은 어땠나요?</Text>
+                            <TextInput
+                                placeholder="숫자만 입력 가능합니다"
+                                placeholderTextColor="#ccc"
+                                style={styles.modalInput}
+                                onChangeText={(text) => {
+                                    const numericText = text.replace(/[^0-9]/g, ''); // 숫자만 허용
+                                    if (numericText === '' || (parseInt(numericText, 10) <= 10 && parseInt(numericText, 10) >= 0)) {
+                                        setScore(numericText);
+                                    }
+                                }}
+                                keyboardType="numeric"
+                            ></TextInput>
+                            <Pressable
+                                style={styles.modalSubmit}
+                                onPress={handleSubmit}
+                            >
+                                <Text style={styles.submitText}>평가하기</Text>
+                            </Pressable>
+                        </View>
                     </View>
                 </TouchableWithoutFeedback>
 
@@ -284,9 +298,13 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         backgroundColor: "#eedd33",
     },
+    modalWrap: {
+        flexGrow: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: "rgba(0, 0, 0, 0.5)"
+    },
     modalView: {
-        position: "absolute",
-        top: "60%",
         width: "90%",
         padding: 40,
         marginHorizontal: "5%",
