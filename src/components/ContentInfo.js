@@ -1,32 +1,20 @@
 import React, {useEffect, useState} from "react";
-import {
-    Alert,
-    Image,
-    Keyboard,
-    Modal,
-    Pressable,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    TouchableWithoutFeedback,
-    View
-} from "react-native";
+import {Image, StyleSheet, Text, TouchableOpacity, View} from "react-native";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import {Ionicons} from "@expo/vector-icons";
 import {useNavigation} from "@react-navigation/native";
 import axios from "axios";
 import CONFIG from "../../Config";
+import ContentMyScore from "./ContentMyScore";
 
-export default function ContentInfo({ item, scoreAvg, savedMyScore, setSavedMyScore, getScoreAvg }) {
+export default function ContentInfo({item}) {
     const navigation = useNavigation();
 
     const [viewCnt, setViewCnt] = useState(0);
     const [likeIt, setLikeIt] = useState(false);
     const [seen, setSeen] = useState(false);
     const [bookmark, setBookmark] = useState(false);
-    const [modalVisible, setModalVisible] = useState(false); // 평가 입력 modal 창을 열고 닫는 변수 선언
-    const [score, setScore] = useState(""); // 평가점수 입력 input 변수
+    const [scoreAvg, setScoreAvg] = useState(0.0);
 
     const getBookmarkData = async () => {
         try {
@@ -56,6 +44,22 @@ export default function ContentInfo({ item, scoreAvg, savedMyScore, setSavedMySc
             });
 
             setViewCnt(totalViewResponse.data);
+        } catch (error) {
+            console.error("데이터 가져오기 오류:", error);
+        }
+    }
+
+    const getScoreAvg = async () => {
+        try {
+            // 평균 점수 가져오기
+            const scoreResponse = await axios.get(CONFIG.API_BASE_URL+"/review-score-avg", {
+                params: { contentsId: item.id },
+            });
+            if (scoreResponse.data && scoreResponse.data > 0){
+                setScoreAvg(scoreResponse.data);
+            } else {
+                setScoreAvg(0.0);
+            }
         } catch (error) {
             console.error("데이터 가져오기 오류:", error);
         }
@@ -113,35 +117,11 @@ export default function ContentInfo({ item, scoreAvg, savedMyScore, setSavedMySc
         }
     }
 
-    const myScoreSave = async () => {
-        // 평가 입력 input 에 값이 없을 경우 alert 호출 함수
-        if (!score) {
-            Alert.alert("입력 오류", "숫자를 입력해주세요.");
-            return;
-        } else {
-            await axios.post(CONFIG.API_BASE_URL+"/my-score", {
-                data: { contentsId: item.id,
-                        usrId: CONFIG.LOGIN_ID,
-                        score: score}
-            });
-            setSavedMyScore(score);
-            getScoreAvg();
-
-            // 평가 입력 input 에 값이 있을 경우 modal 닫힘
-            setModalVisible(false);
-        }
-    };
-
     useEffect(() => {
         getBookmarkData();
         totalView();
+        getScoreAvg();
     }, []);
-
-    useEffect(() => {
-        if (!modalVisible) {
-            setScore(savedMyScore > 0 ? savedMyScore : score);
-        }
-    }, [modalVisible]);
 
     return (
         <View style={styles.container}>
@@ -194,53 +174,8 @@ export default function ContentInfo({ item, scoreAvg, savedMyScore, setSavedMySc
                 </View>
             </View>
 
-            {/* 점수 입력 */}
-            <View>
-                <Pressable style={styles.response} onPress={() => setModalVisible(true)}>
-                    {savedMyScore > 0 ? (<Text>나의 평가 점수 : {savedMyScore}</Text>) : (<Text>평가하기</Text>)}
-                </Pressable>
-            </View>
-
-            <Modal
-                animationType="slide"
-                transparent={true}
-                visible={modalVisible}
-                onRequestClose={() => {
-                    setModalVisible(false);
-                }}
-            >
-                <TouchableWithoutFeedback
-                    onPress={() => {
-                        Keyboard.dismiss(); setModalVisible(false);
-                    }}
-                >
-                    <View style={styles.modalWrap}>
-                        <View style={styles.modalView}>
-                            <Text style={styles.modalText}>이번 작품은 어땠나요?</Text>
-                            <TextInput
-                                placeholder="숫자만 입력 가능합니다"
-                                placeholderTextColor="#ccc"
-                                style={styles.modalInput}
-                                value={score}
-                                onChangeText={(text) => {
-                                    const numericText = text.replace(/[^0-9]/g, ''); // 숫자만 허용
-                                    if (numericText === '' || (parseInt(numericText, 10) <= 10 && parseInt(numericText, 10) >= 0)) {
-                                        setScore(numericText);
-                                    }
-                                }}
-                                keyboardType="numeric"
-                            ></TextInput>
-                            <Pressable
-                                style={styles.modalSubmit}
-                                onPress={myScoreSave}
-                            >
-                                <Text style={styles.submitText}>평가하기</Text>
-                            </Pressable>
-                        </View>
-                    </View>
-                </TouchableWithoutFeedback>
-
-            </Modal>
+            {/* 내 평가 점수 */}
+            <ContentMyScore item={item} getScoreAvg={getScoreAvg}></ContentMyScore>
         </View>
     );
 }

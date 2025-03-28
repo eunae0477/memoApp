@@ -10,9 +10,7 @@ export default function DetailScreen({ route }) {
     const { item } = route.params;
 
     const [reviewData, setReviewData] = useState([]);
-    const [scoreAvg, setScoreAvg] = useState(0.0);
     const [reviewForEdit, setReviewForEdit] = useState(null);   // 수정할 리뷰의 데이터
-    const [myScore, setMyScore] = useState(0);
 
     const getReviewList = async () => {
         try {
@@ -28,45 +26,8 @@ export default function DetailScreen({ route }) {
         }
     }
 
-    const getScoreAvg = async () => {
-        try {
-            // 평균 점수 가져오기
-            const scoreResponse = await axios.get(CONFIG.API_BASE_URL+"/review-score-avg", {
-                params: { contentsId: item.id },
-            });
-            if (scoreResponse.data && scoreResponse.data > 0){
-                setScoreAvg(scoreResponse.data);
-            } else {
-                setScoreAvg(0.0);
-            }
-        } catch (error) {
-            console.error("데이터 가져오기 오류:", error);
-        }
-    }
-
-    const getMyScore = async () => {
-        try {
-            // 나의 평가 점수 가져오기
-            const myScoreData = await axios.get(CONFIG.API_BASE_URL+"/my-score", {
-                params: {
-                    contentsId: item.id,
-                    usrId: CONFIG.LOGIN_ID},
-            });
-
-            if (myScoreData.data > 0) {
-                setMyScore(myScoreData.data);
-            } else {
-                setMyScore(0.0);
-            }
-        } catch (error) {
-            console.error("데이터 가져오기 오류:", error);
-        }
-    }
-
     useEffect(() => {
         getReviewList();
-        getScoreAvg();
-        getMyScore();
     }, []);
 
     return (
@@ -77,7 +38,7 @@ export default function DetailScreen({ route }) {
         >
 
             {/* 컨텐츠 정보*/}
-            <ContentInfo item={item} scoreAvg={scoreAvg} myScore={myScore} setMyScore={setMyScore} getScoreAvg={getScoreAvg}/>
+            <ContentInfo item={item}/>
 
             {/* 리뷰 등록 */}
             <ReviewInput
