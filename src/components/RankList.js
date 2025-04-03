@@ -3,7 +3,7 @@ import {Image, RefreshControl, ScrollView, StyleSheet, Text, TouchableOpacity, V
 import axios from "axios";
 import CONFIG from "../../Config";
 
-export default function RankList({ typeCode, navigation, data, setData, hasLoaded, setHasLoaded}) {
+export default function RankList({ typeCode, navigation, data, setData, dataType, hasLoaded, setHasLoaded}) {
     const [isRefreshing, setIsRefreshing] = useState(false);  // 새로고침 상태
 
     const fetchData = async () => {
@@ -11,8 +11,9 @@ export default function RankList({ typeCode, navigation, data, setData, hasLoade
             const response = await axios.get(CONFIG.API_BASE_URL + "/contents-list", {
                 params: { typeCode: typeCode },
             });
-            setData(response.data);
-            setHasLoaded(true);
+
+            setData(prev => ({ ...prev, [dataType]: response.data }));
+            setHasLoaded(prev => ({ ...prev, [dataType]: true }));
         } catch (error) {
             console.error("데이터 가져오기 오류:", error);
         }
