@@ -64,7 +64,7 @@ export default function ReviewItem({ item, getReviewList, setReviewForEdit, setR
         <View style={styles.reviewItem}>
             <Text style={styles.userName}>{item.usrName}</Text>
             <Text>날짜: {item.reviewDate}</Text>
-            <Text>후기: {item.comment}</Text>
+            <Text style={styles.comment}>후기: {item.comment}</Text>
             {String(item.usrId) === String(CONFIG.LOGIN_ID) ? (
                 <View style={styles.buttonContainer}>
                     <Text style={styles.reviewBtn} onPress={() => setReviewForEdit(item)}>수정</Text>
@@ -91,6 +91,11 @@ export default function ReviewItem({ item, getReviewList, setReviewForEdit, setR
 const styles = StyleSheet.create({
     reviewItem: { padding: 10, borderBottomWidth: 1, borderBottomColor: "#ccc" },
     userName: { fontWeight: "bold" },
+    comment: {
+        padding: 10,
+        marginVertical: 10,
+        backgroundColor: '#eee',
+    },
     buttonContainer: {
         flexDirection: 'row',
         columnGap: 10,
@@ -99,7 +104,8 @@ const styles = StyleSheet.create({
         flexGrow: 1,
         textAlign: 'center',
         backgroundColor: 'skyblue',
-        maxWidth: 200
+        maxWidth: 200,
+        padding: 5,
     },
     goodReview: {
         backgroundColor: 'pink'

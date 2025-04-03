@@ -68,7 +68,6 @@ const ReviewInput = ({contentsId, onReviewSaved, reviewForEdit, setReviewForEdit
                 onChangeText={setMyReview}
                 editable
                 multiline
-                numberOfLines={20}
                 inputMode={"text"}
             />
 
@@ -96,26 +95,27 @@ const ReviewInput = ({contentsId, onReviewSaved, reviewForEdit, setReviewForEdit
 
 const styles = StyleSheet.create({
     container: {
-        marginTop: 10,
+
     },
     input: {
+        flexGrow: 1,
         borderWidth: 1,
         borderColor: '#ccc',
         padding: 10,
-        height: 30,
         borderRadius: 5,
-        marginBottom: 10,
     },
     textarea: {
-        overflowY: "scroll",
-        height: 100,
+        borderBottomLeftRadius: 0,
+        borderBottomRightRadius: 0,
+        borderBottomWidth: 0,
+        maxHeight: 100,
     },
     submit: {
         flexDirection: "row",
-        height: 50,
         justifyContent: "center",
         alignItems: "center",
         backgroundColor: "#33ccff",
+        padding: 10,
     },
     submitText: {
         fontSize: 16,
