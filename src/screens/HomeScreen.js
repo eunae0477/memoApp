@@ -60,7 +60,7 @@ export default function HomeScreen({ navigation }) {
 
     const renderCategoryButtons = (dataType) => {
         return (
-            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{flexGrow: 0}}>
                 {categories[dataType]?.map((cat) => (
                     <TouchableOpacity
                         key={cat.id}
