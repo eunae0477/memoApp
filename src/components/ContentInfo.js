@@ -161,6 +161,7 @@ export default function ContentInfo({item}) {
             {/* ✅ 작품 정보 */}
             <Text style={styles.title}>{item.title}</Text>
             <Text style={styles.author}>{item.author}</Text>
+            <Text style={styles.categoryCode}>{item.categoryCode?.trim()}</Text>
 
             {/* ✅ 조회수 & 평점 */}
             <View style={styles.statsContainer}>
@@ -222,6 +223,14 @@ const styles = StyleSheet.create({
         color: "gray",
         marginBottom: 10,
         alignSelf: "center",
+    },
+    categoryCode: {
+        borderWidth: 1,
+        borderStyle: "solid",
+        borderColor: "#ccc",
+        borderRadius: 30,
+        color: "gray",
+        padding: "3px"
     },
     statsContainer: {
         flexDirection: "row",
