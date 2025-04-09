@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import {Image, RefreshControl, ScrollView, StyleSheet, Text, TouchableOpacity, View} from "react-native";
 import axios from "axios";
-import CONFIG from "../../Config";
+import CONFIG from "@config";
 
 export default function RankList({ typeCode, navigation, data, setData, dataType, hasLoaded, setHasLoaded}) {
     const [isRefreshing, setIsRefreshing] = useState(false);  // 새로고침 상태
@@ -42,7 +42,7 @@ export default function RankList({ typeCode, navigation, data, setData, dataType
             <View style={styles.gridContainer}>
                 {data.map((item, index) => (
                     <TouchableOpacity
-                        key={index}
+                        key={`${dataType}-${index}`}
                         style={styles.box}
                         onPress={() => navigation.navigate("상세화면", { item })}
                     >

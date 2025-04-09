@@ -4,8 +4,8 @@ import FontAwesome from "react-native-vector-icons/FontAwesome";
 import {Ionicons} from "@expo/vector-icons";
 import {useNavigation} from "@react-navigation/native";
 import axios from "axios";
-import CONFIG from "../../Config";
-import ContentMyScore from "./ContentMyScore";
+import CONFIG from "@config";
+import ContentMyScore from "@components/review/ContentMyScore";
 
 export default function ContentInfo({item}) {
     const navigation = useNavigation();

@@ -1,17 +1,17 @@
 import React, {useEffect, useState} from "react";
 import {Dimensions, ScrollView, StyleSheet, Text, TouchableOpacity, View} from "react-native";
 import {SceneMap, TabBar, TabView} from "react-native-tab-view";
-import RankList from "../components/RankList";
+import RankList from "@components/rank/RankList";
 import axios from "axios";
-import CONFIG from "../../Config";
+import CONFIG from "@config";
 
 const initialLayout = { width: Dimensions.get("window").width };
 
 export default function HomeScreen({ navigation }) {
     const [index, setIndex] = useState(0);
     const [routes] = useState([
-        { key: "novel", title: "웹소설" },
         { key: "webtoon", title: "웹툰" },
+        { key: "novel", title: "웹소설" }
     ]);
 
     const [data, setData] = useState({

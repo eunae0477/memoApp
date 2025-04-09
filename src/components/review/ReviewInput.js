@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {View, TextInput, Button, StyleSheet, Alert, Pressable, Text} from 'react-native';
 import axios from "axios";
-import CONFIG from "../../Config";
+import CONFIG from "@config";
 
 const ReviewInput = ({contentsId, onReviewSaved, reviewForEdit, setReviewForEdit}) => {
     const [myReview, setMyReview] = useState(reviewForEdit?.comment || "");
@@ -70,25 +70,9 @@ const ReviewInput = ({contentsId, onReviewSaved, reviewForEdit, setReviewForEdit
                 multiline
                 inputMode={"text"}
             />
-
-            {/* 점수 입력 필드 (0~10 사이 숫자) */}
-            {/*<TextInput
-                style={styles.input}
-                placeholder="점수 (0-10)"
-                value={score}
-                onChangeText={(text) => {
-                    const numericText = text.replace(/[^0-9]/g, ''); // 숫자만 허용
-                    if (numericText === '' || (parseInt(numericText, 10) <= 10 && parseInt(numericText, 10) >= 0)) {
-                        setScore(numericText);
-                    }
-                }}
-                keyboardType="numeric"
-            />*/}
-
             <Pressable style={styles.submit} onPress={reviewSave}>
                 <Text style={styles.submitText}>저장</Text>
             </Pressable>
-            {/*<Button title="저장" onPress={reviewSave} />*/}
         </View>
     );
 };

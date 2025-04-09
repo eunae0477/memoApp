@@ -1,10 +1,10 @@
 import React, {useEffect, useState} from 'react';
 import {ScrollView, StyleSheet} from 'react-native';
 import axios from "axios";
-import CONFIG from "../../Config";
-import ContentInfo from "../components/ContentInfo";
-import ReviewInput from "../components/ReviewInput";
-import ReviewList from "../components/ReviewList";
+import CONFIG from "@config";
+import ContentInfo from "@components/contents/ContentInfo";
+import ReviewInput from "@components/review/ReviewInput";
+import ReviewList from "@components/review/ReviewList";
 
 export default function DetailScreen({ route }) {
     const { item } = route.params;

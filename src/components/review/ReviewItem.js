@@ -1,7 +1,7 @@
 import React from "react";
 import {View, Text, Button, StyleSheet, Alert} from "react-native";
 import axios from "axios";
-import CONFIG from "../../Config";
+import CONFIG from "@config";
 
 export default function ReviewItem({ item, getReviewList, setReviewForEdit, setReviewData }) {
     const reviewDel = () => {

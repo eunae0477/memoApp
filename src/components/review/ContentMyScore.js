@@ -11,7 +11,7 @@ import {
     View
 } from "react-native";
 import axios from "axios";
-import CONFIG from "../../Config";
+import CONFIG from "@config";
 
 export default function ContentMyScore({ item, getScoreAvg }) {
     const [modalVisible, setModalVisible] = useState(false); // 평가 입력 modal 창을 열고 닫는 변수 선언

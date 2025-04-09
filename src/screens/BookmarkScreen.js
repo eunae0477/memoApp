@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {Dimensions, StyleSheet, Text, View} from 'react-native';
 import {SceneMap, TabBar, TabView} from "react-native-tab-view";
-import BookmarkList from "../components/BookmarkList";
+import BookmarkList from "@components/bookmark/BookmarkList";
 
 const initialLayout = { width: Dimensions.get("window").width };
 
