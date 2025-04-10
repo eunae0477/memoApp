@@ -63,7 +63,7 @@ export default function HomeScreen({ navigation }) {
             <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{flexGrow: 0}}>
                 {categories[dataType]?.map((cat) => (
                     <TouchableOpacity
-                        key={cat.id}
+                        key={`${cat.id}-${cat.code}`}
                         style={[
                             styles.categoryButton,
                             selectedCategory[dataType]?.id === cat.id && styles.categoryButtonActive,
