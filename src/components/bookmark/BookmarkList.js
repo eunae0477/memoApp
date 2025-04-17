@@ -1,29 +1,39 @@
-import React, {useEffect, useState} from "react";
-import {Image, RefreshControl, ScrollView, StyleSheet, Text, TouchableOpacity, View} from "react-native";
+import React, { useEffect, useState, useRef } from "react";
+import {
+    Image,
+    RefreshControl,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
+} from "react-native";
+import DraggableFlatList from "react-native-draggable-flatlist";
 import axios from "axios";
 import CONFIG from "@config";
-import DraggableFlatList from "react-native-draggable-flatlist/src/components/DraggableFlatList";
 
-export default function BookmarkList({ bookmarkType, navigation, data, setData, hasLoaded, setHasLoaded }) {
-    const [isRefreshing, setIsRefreshing] = useState(false);  // 새로고침 상태
+export default function BookmarkList({
+                                         bookmarkType,
+                                         navigation,
+                                         data,
+                                         setData,
+                                         hasLoaded,
+                                         setHasLoaded,
+                                     }) {
+    const [isRefreshing, setIsRefreshing] = useState(false);
+    const activeDragRef = useRef(false);
 
     const fetchData = async () => {
         try {
             const params = {
                 usrId: CONFIG.LOGIN_ID,
-                bookmarkType: bookmarkType
+                bookmarkType,
             };
-
             const response = await axios.get(CONFIG.API_BASE_URL + "/bookmark-list", { params });
-
-            // 북마크일 때만 드래그(순서변경)하기 위해서 리스트 재정렬
-            const updated = response.data.map((item, index) => ({
+            const updatedData = response.data.map((item, index) => ({
                 ...item,
-                key: `${item.id || index}`, // 드래그용 키
+                key: `${item.id || index}`,
             }));
-            setData(updated);
-
-            // setData(response.data);
+            setData(updatedData);
             setHasLoaded(true);
         } catch (error) {
             console.error("데이터 가져오기 오류:", error);
@@ -36,111 +46,109 @@ export default function BookmarkList({ bookmarkType, navigation, data, setData, 
         }
     }, [bookmarkType, hasLoaded]);
 
-    // 새로고침 기능
     const onRefresh = async () => {
         setIsRefreshing(true);
         await fetchData();
         setIsRefreshing(false);
     };
 
+    const onDragEnd = ({ data: newData }) => {
+        setData(newData);
+
+        // 순서 저장
+        if (bookmarkType === "bookmark") {
+            const contentsIdArr = newData.map((item) => item.id);
+            axios.post(CONFIG.API_BASE_URL + "/bookmark-seq", {
+                usrId: CONFIG.LOGIN_ID,
+                contentsIdArr: contentsIdArr,
+            },{
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            }).catch(err => {
+                console.error("순서 저장 실패", err);
+            });
+        }
+    };
+
     const renderItem = ({ item, drag, isActive }) => (
         <TouchableOpacity
-            onLongPress={bookmarkType === "bookmark" ? drag : undefined}
-            style={[styles.box, isActive && styles.activeItem]}
+            style={[styles.itemContainer, isActive && styles.activeItem]}
             onPress={() => navigation.navigate("상세화면", { item })}
+            disabled={isActive}
         >
-            <Image source={{ uri: item.img }} style={styles.image} />
-            <View style={styles.textContainer}>
-                <Text style={styles.title} numberOfLines={1}>
+            <Image source={{ uri: item.img }} style={styles.itemImage} />
+            <View style={styles.itemContent}>
+                <Text style={styles.itemTitle} numberOfLines={1}>
                     {item.title}
                 </Text>
-                <Text style={{ fontSize: 12, color: "#666" }}>#{item.categoryCode?.trim()} / {item.author}</Text>
+                <Text style={styles.itemMeta}>#{item.categoryCode} / {item.author}</Text>
             </View>
+
+            {/* ✅ 드래그 핸들 버튼 (bookmark일 때만 동작) */}
             {bookmarkType === "bookmark" && (
-                <View style={styles.dragHandle}>
+                <TouchableOpacity
+                    style={styles.dragHandle}
+                    onPressIn={() => {
+                        activeDragRef.current = true;
+                        drag();
+                    }}
+                    onPressOut={() => (activeDragRef.current = false)}
+                >
                     <Text style={{ fontSize: 18 }}>≡</Text>
-                </View>
+                </TouchableOpacity>
             )}
         </TouchableOpacity>
     );
 
-    return bookmarkType === "bookmark" ? (
+    return (
         <DraggableFlatList
             data={data}
-            onDragEnd={({ data }) => setData(data)}
-            keyExtractor={(item, index) => `draggable-${index}`}
+            onDragEnd={onDragEnd}
+            keyExtractor={(item, index) => `draggable-${bookmarkType}-${index}`}
             renderItem={renderItem}
             refreshControl={
                 <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
             }
+            scrollEnabled={!activeDragRef.current}
             contentContainerStyle={styles.listContainer}
         />
-    ) : (
-        <ScrollView
-            style={styles.container}
-            refreshControl={
-                <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
-            }
-        >
-            <View style={styles.listContainer}>
-                {data.map((item, index) => (
-                    <TouchableOpacity
-                        key={`${bookmarkType}-${index}`}
-                        style={styles.box}
-                        onPress={() => navigation.navigate("상세화면", { item })}
-                    >
-                        <Image source={{ uri: item.img }} style={styles.image} />
-                        <View style={styles.textContainer}>
-                            <Text style={styles.title} numberOfLines={1}>
-                                {item.title}
-                            </Text>
-                            <Text style={{ fontSize: 12, color: "#666" }}>
-                                작가명 등 기타 정보
-                            </Text>
-                        </View>
-                    </TouchableOpacity>
-                ))}
-            </View>
-        </ScrollView>
     );
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-    },
     listContainer: {
         padding: 10,
     },
-    box: {
+    itemContainer: {
         flexDirection: "row",
         alignItems: "center",
-        backgroundColor: "#ffffff",
+        backgroundColor: "#fff",
         padding: 10,
         borderRadius: 8,
         marginBottom: 10,
         elevation: 2,
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.1,
-        shadowRadius: 2,
     },
     activeItem: {
         backgroundColor: "#f0f0f0",
     },
-    image: {
+    itemImage: {
         width: 60,
         height: 80,
         borderRadius: 5,
         marginRight: 10,
     },
-    textContainer: {
+    itemContent: {
         flex: 1,
     },
-    title: {
+    itemTitle: {
         fontSize: 14,
         fontWeight: "bold",
-        marginBottom: 4,
+    },
+    itemMeta: {
+        fontSize: 12,
+        color: "#666",
+        marginTop: 4,
     },
     dragHandle: {
         paddingLeft: 10,
